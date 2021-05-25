@@ -1,28 +1,27 @@
 import React, {useRef, useState} from 'react'
 import {Button, Card, Form, Alert} from 'react-bootstrap'
-import {Link, useHistory} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {useAuth} from '../contexts/AuthContext'
 
-export function Login() {
+export function ForgotPassword() {
     const emailRef = useRef()
-    const passwordRef = useRef()
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    const history = useHistory()
-
-    const {login} = useAuth()
+    const [message, setMessage] = useState('')
+    const {resetPassword} = useAuth()
 
     async function handleSubmit(e) {
         e.preventDefault()
 
         try{
+            setMessage('')
             setLoading(true)
             setError('')
-            await login(emailRef.current.value, passwordRef.current.value)
-            history.push("/")
+            await resetPassword(emailRef.current.value)
+            setMessage(`Nous venons d'envoyer un mail à l'adresse ${emailRef.current.value}`)
         }
         catch{
-            setError('Votre e-mail ou votre mot de passe n’est pas correct.')
+            setError(`L'adresse e-mail n'est pas reconnue ou a été archivée. Nous vous invitons à vérifier l'orthographe ou à créer un compte.`)
         }
 
         setLoading(false)
@@ -32,9 +31,10 @@ export function Login() {
         <>
             <Card>
                 <Card.Body>
-                    <h2 className="text-center mb-4">Connexion</h2>
+                    <h2 className="text-center mb-4">Modifer mot de passe</h2>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    <Form onSubmit={handleSubmit}>
+                    {message && <Alert variant="success">{message}</Alert>}
+                    <Form className="mb-4" onSubmit={handleSubmit}>
                         <Form.Group id="email" className="mt-3">
                                 <Form.Control 
                                     type="email"
@@ -43,19 +43,11 @@ export function Login() {
                                     required>
                                 </Form.Control>
                         </Form.Group>
-                        <Form.Group id="password" className="mt-3">
-                            <Form.Control 
-                                type="password"
-                                placeholder="Mot de passe"
-                                ref={passwordRef}
-                                required>
-                            </Form.Control>
-                        </Form.Group>
                         <Button disabled={loading} className="w-100 mt-3" type="submit">
-                            Connexion
+                            Modifier mot de passe
                         </Button>
                     </Form>
-                    <Link className="float-end mt-3" to="/forgot-password">Mot de passe oublié</Link>
+                    <div className="text-center"><Link to="/login">Retour à la connexion</Link></div>
                 </Card.Body>
             </Card>
             <div className="w-100 text-center mt-2">

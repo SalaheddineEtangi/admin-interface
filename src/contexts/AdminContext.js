@@ -1,18 +1,15 @@
 import React, {useContext, useState, useEffect} from 'react'
-import {auth} from '../firebase' 
 
-const AuthContext = React.createContext()
+const AdminContext = React.createContext()
 
-export function useAuth() {
-    return useContext(AuthContext)
+export function useAdmin() {
+    return useContext(AdminContext)
 }
 
-export function AuthProvider({children}) {
-    const [currentUser, setCurrentUser] = useState()
-    const [loading, setLoading] = useState(true)
+export function AdminProvider({children}) {
 
-    function signup(email, password) {
-        return auth.createUserWithEmailAndPassword(email, password)
+    function addUser() {
+        fetch(`${API_URL}/users/register`, { method: 'POST' })
     }
 
     function login(email, password) {
@@ -46,7 +43,7 @@ export function AuthProvider({children}) {
 
     const value = {
         currentUser,
-        signup,
+        addUser,
         login, 
         logout,
         resetPassword,

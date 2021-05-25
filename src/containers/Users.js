@@ -17,9 +17,12 @@ class Users extends Component {
     }
 
     render(){
+        const {users} = this.state
+
         return(
-            <div>
-                <UsersList list={this.state.users}/>
+            <div className="text-center mt-4">
+                {users.length > 0 && <UsersList list={this.state.users}/>}
+                {users.length === 0 && <strong>Aucun utilisateur à afficher</strong>}
             </div>
         )
     }
