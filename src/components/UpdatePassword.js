@@ -35,7 +35,7 @@ export function UpdatePassword() {
         Promise.all(promises).then(() => {
             history.push('/')
         }).catch(() => {
-            setError(`L'adresse e-mail n'est pas reconnue ou a été archivée. Nous vous invitons à vérifier l'orthographe ou à créer un compte`)
+            setError()
         }).finally(() => {
             setLoading(false)
         })

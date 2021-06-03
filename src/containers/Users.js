@@ -1,9 +1,11 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import UsersList from '../components/UsersList';
 import { API_URL } from '../config';
+import {connect} from 'react-redux'
+import * as actions from '../actions/user' 
 
-class Users extends Component {
-    state = {
+const Users = props => {
+    /*state = {
         users: []
     }
 
@@ -14,18 +16,26 @@ class Users extends Component {
             {
                 users: json.items,
             }));
-    }
+    }*/
 
-    render(){
-        const {users} = this.state
+    useEffect(() => {
+        props.fetchAllUsers()
+    }, [])
 
         return(
             <div className="text-center mt-4">
-                {users.length > 0 && <UsersList list={this.state.users}/>}
-                {users.length === 0 && <strong>Aucun utilisateur à afficher</strong>}
+                {props.usersList.length > 0 && <UsersList /*list={users}*//>}
+                {props.usersList.length === 0 && <strong>Aucun utilisateur à afficher</strong>}
             </div>
         )
-    }
 }
 
-export default Users;
+const mapStateToProps = state => ({
+    usersList: state.user.users
+})
+
+const mapActionToProps = {
+    fetchAllUsers: actions.fetchAll
+}
+
+export default connect(mapStateToProps, mapActionToProps)(Users);

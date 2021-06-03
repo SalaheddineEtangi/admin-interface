@@ -1,16 +1,34 @@
 import React, {useRef, useState} from 'react'
 import {Button, Card, Form, Alert} from 'react-bootstrap'
-import {Link, useHistory} from 'react-router-dom'
-import {useAuth} from '../contexts/AuthContext'
+import {useHistory} from 'react-router-dom'
+import {connect} from 'react-redux'
+import {API_URL} from '../config.js'
 
-export function AddUser(){
+const AddUser = (props) => {
     const emailRef = useRef()
     const passwordRef = useRef()
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     const history = useHistory()
+    const axios = require('axios').default
 
-    const {login} = useAuth()
+    function getAllUsers() {
+        var users
+        fetch(`${API_URL}/users`)
+        .then(response => response.json())
+        .then(json => users = json.items)
+        return users
+    }
+
+    function incrementId(users){
+        if(users.length === 0){
+            return 0
+        }
+        else{
+            const lastUser = users[users.length - 1]
+            return lastUser.id + 1
+        }
+    }
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -18,11 +36,19 @@ export function AddUser(){
         try{
             setLoading(true)
             setError('')
-            await login(emailRef.current.value, passwordRef.current.value)
+            axios({
+                method: 'post',
+                url: `${API_URL}/users/register`,
+                data: {
+                    id: incrementId(getAllUsers()),
+                    email: emailRef,
+                    password: passwordRef
+                }
+              }).then(response => console.log(response))
             history.push("/")
         }
         catch{
-            setError('Votre e-mail ou votre mot de passe n’est pas correct.')
+            setError()
         }
 
         setLoading(false)
@@ -31,7 +57,7 @@ export function AddUser(){
     return(
         <Card>
             <Card.Body>
-                <h2 className="text-center mb-4">Connexion</h2>
+                <h2 className="text-center mb-4">Ajouter un utilisateur</h2>
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form onSubmit={handleSubmit}>
                     <Form.Group id="email" className="mt-3">
@@ -51,11 +77,12 @@ export function AddUser(){
                         </Form.Control>
                     </Form.Group>
                     <Button disabled={loading} className="w-100 mt-3" type="submit">
-                        Connexion
+                        Ajouter
                     </Button>
                 </Form>
-                <Link className="float-end mt-3" to="/forgot-password">Mot de passe oublié</Link>
             </Card.Body>
         </Card>
     )
 }
+
+export default connect()(AddUser)

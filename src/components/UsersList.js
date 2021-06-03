@@ -5,6 +5,9 @@ import {
     Button
 } from 'reactstrap';
 import {API_URL} from '../config';
+import {useEffect} from "react"
+import {connect} from 'react-redux'
+import * as actions from '../actions/user' 
 
 const deleteUser = id => {
     fetch(`${API_URL}/users/delete/${id}`, { method: 'DELETE' })
@@ -15,11 +18,11 @@ const UsersListItem = props => {
     return(
         <ListGroup className="mt-4">
             <ListGroupItem>
-                <strong>{props.users.email}</strong>
+                <strong>{props.user.email}</strong>
                 <Button 
                     color="danger" 
                     className="float-end"
-                    onClick={() => deleteUser(props.users.id)}>
+                    onClick={() => deleteUser(props.user.id)}>
                     Supprimer
                 </Button>
             </ListGroupItem>
@@ -28,13 +31,26 @@ const UsersListItem = props => {
 };
 
 const UsersList = props => {
+
+    useEffect(() => {
+        props.fetchAllUsers()
+    }, [])
+
     return(
         <ListGroup className="mt-4">
-            {props.list.map(users => (
-                <UsersListItem users={users} key={users.id}/>
+            {props.usersList.map((user, index) => (
+                <UsersListItem user={user} key={index}/>
             ))}
         </ListGroup>
     )
 };
 
-export default UsersList;
+const mapStateToProps = state => ({
+    usersList: state.user.users
+})
+
+const mapActionToProps = {
+    fetchAllUsers: actions.fetchAll
+}
+
+export default connect(mapStateToProps, mapActionToProps)(UsersList)
