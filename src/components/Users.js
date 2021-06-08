@@ -1,27 +1,52 @@
-import { Grid, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from "@material-ui/core"
-import React, {useState, useEffect} from "react"
+import { Grid, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, ButtonGroup, withStyles } from "@material-ui/core"
+import React, {useEffect, useState} from "react"
 import {connect} from 'react-redux'
 import * as actions from '../actions/user' 
 import UserForm from './UserForm'
+import EditIcon from '@material-ui/icons/Edit'
+import DeleteIcon from '@material-ui/icons/Delete'
+import {useToasts} from 'react-toast-notifications'
 
-const Users = (props) => {
+const styles = theme => ({
+    root: {
+        "& .MuiTableCell-head": {
+            fontSize: "1.25rem"
+        }
+    },
+    paper: {
+        margin: theme.spacing(2),
+        padding: theme.spacing(2)
+    }
+})
+
+const Users = ({classes, ...props}) => {
+    const [currentId, setCurrentId] = useState(0)
+    //toast msg
+    const {addToast} = useToasts()
 
     useEffect(() => {
         props.fetchAllUsers()
     }, [])
 
+    const onDelete = id => {
+        if(window.confirm('Voulez vous vraiment supprimer ce compte utilisateur ?')){
+            props.deleteUser(id, () => addToast('Supprimé avec succès', {appearance: 'error'}))
+        }
+}
+
     return(
-        <Paper>
+        <Paper className={classes.paper} elevation={3}>
             <Grid container>
                 <Grid item xs={6}>
-                    <UserForm />
+                    <UserForm currentId={currentId}/>
                 </Grid>
                 <Grid item xs={6}>
                     <TableContainer>
                         <Table>
-                            <TableHead>
+                            <TableHead className={classes.root}>
                                 <TableRow>
-                                    <TableCell>Email</TableCell>
+                                    <TableCell>Liste des utilisateurs</TableCell>
+                                    <TableCell></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -29,6 +54,12 @@ const Users = (props) => {
                                     props.usersList.map((user, index) => {
                                         return(<TableRow key={index}>
                                             <TableCell>{user.email}</TableCell>
+                                            <TableCell>
+                                                <ButtonGroup variant="text">
+                                                    <Button><EditIcon color="primary" onClick={() => {setCurrentId(user.id)}} /></Button>
+                                                    <Button><DeleteIcon color="error" onClick={() => {onDelete(user.id)}}/></Button>
+                                                </ButtonGroup>
+                                            </TableCell>
                                         </TableRow>)
                                     })
                                 }
@@ -46,7 +77,8 @@ const mapStateToProps = state => ({
     })
 
 const mapActionToProps = {
-    fetchAllUsers: actions.fetchAll
+    fetchAllUsers: actions.fetchAll,
+    deleteUser: actions.remove
 }
 
-export default connect(mapStateToProps, mapActionToProps)(Users)
+export default connect(mapStateToProps, mapActionToProps)(withStyles(styles)(Users))

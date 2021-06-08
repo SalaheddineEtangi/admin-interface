@@ -15,11 +15,11 @@ import {Provider} from 'react-redux'
 import {Container} from '@material-ui/core'
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {ToastProvider} from 'react-toast-notifications'
 
 function App() {
   return (
     <Provider store={store}>
-      <Container maxWidth="lg"></Container>
       <div className="App">
           <Router>
             <AuthProvider>
@@ -31,7 +31,11 @@ function App() {
                 <Route path="/signup" component={Signup}></Route>
                 <Route path="/login" component={Login}></Route>
                 <Route path="/forgot-password" component={ForgotPassword}></Route>
-                <Route path="/users" component={Users}></Route>
+                <ToastProvider autoDismiss={true}>
+                  <Container>
+                    <Route path="/users" component={Users}></Route>
+                  </Container>
+                </ToastProvider>
               </Switch>
             </AuthProvider>
           </Router>
