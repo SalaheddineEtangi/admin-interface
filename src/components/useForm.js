@@ -1,8 +1,12 @@
 import {useState} from 'react'
+import {useToasts} from 'react-toast-notifications'
 
 const useForm = (initialFieldValues, setCurrentId) => {
     const [values, setValues] = useState(initialFieldValues)
     const [errors, setErrors] = useState({})
+
+    //toast msg
+    const {addToast} = useToasts()
 
     const handleInputChange = e => {
         const {name, value} = e.target
@@ -14,7 +18,7 @@ const useForm = (initialFieldValues, setCurrentId) => {
         validate(fieldValue)
     }
 
-    const reload = () => window.location.reload()
+    const onSuccess = (action, correspondingAppearance) => () => addToast(action + ' avec succès', {appearance: correspondingAppearance})
 
     const resetForm = () => {
         setValues({
@@ -49,7 +53,8 @@ const useForm = (initialFieldValues, setCurrentId) => {
         errors,
         setErrors, 
         validate,
-        resetForm
+        resetForm,
+        onSuccess
     }
 }
 

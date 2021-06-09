@@ -3,7 +3,6 @@ import {Grid, TextField, Button, withStyles} from '@material-ui/core'
 import useForm from './useForm'
 import {connect} from 'react-redux'
 import * as actions from '../actions/user' 
-import {useToasts} from 'react-toast-notifications'
 
 const styles = theme => ({
     root: {'& .MuiTextField-root': {
@@ -22,9 +21,6 @@ const initialFieldValues = {
 
 const UserForm = ({classes, ...props}) => {
 
-    //toast msg
-    const {addToast} = useToasts()
-
     const {
         values,
         setValues,
@@ -32,18 +28,20 @@ const UserForm = ({classes, ...props}) => {
         errors, 
         setErrors,
         validate,
+        onSuccess,
         resetForm
     } = useForm(initialFieldValues, props.setCurrentId)
 
     const handleSubmit = e => {
         e.preventDefault()
         if(validate()){
-            const onSuccess = () => addToast('Modifié avec succès', {appearance: 'success'})
             if(props.currentId === 0){
-                props.createUser(props.usersList, values, () => window.alert('ajouté !'))
+                props.createUser(props.usersList, values, onSuccess('Ajouté', 'success'))
+                resetForm()
             }
             else{
-                props.updateUser(props.currentId, props.usersList, values, onSuccess)
+                props.updateUser(props.currentId, props.usersList, values, onSuccess('Modifié', 'success'))
+                resetForm()
             }
         }
     }
@@ -61,7 +59,6 @@ const UserForm = ({classes, ...props}) => {
 
     return(
         <form autoComplete="off" noValidate className={classes.root} onSubmit={handleSubmit}>
-        <div className={classes.smMargin}>Ajouter un utilisateur</div>
             <Grid container>
                 <TextField
                 type="email"

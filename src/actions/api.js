@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const baseUrl = "http://localhost:52935/"
 
-export default {
+const api = {
     user(url = baseUrl + 'users/') {
         return {
             fetchAll: () => axios.get(url), 
@@ -13,3 +13,5 @@ export default {
         }
     }
 }
+
+export default api

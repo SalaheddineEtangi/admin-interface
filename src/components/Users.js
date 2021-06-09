@@ -2,10 +2,10 @@ import { Grid, Paper, TableContainer, Table, TableHead, TableRow, TableCell, Tab
 import React, {useEffect, useState} from "react"
 import {connect} from 'react-redux'
 import * as actions from '../actions/user' 
+import useForm from './useForm'
 import UserForm from './UserForm'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
-import {useToasts} from 'react-toast-notifications'
 
 const styles = theme => ({
     root: {
@@ -19,10 +19,17 @@ const styles = theme => ({
     }
 })
 
+const initialFieldValues = {
+    email: '',
+    password: ''
+}
+
 const Users = ({classes, ...props}) => {
     const [currentId, setCurrentId] = useState(0)
-    //toast msg
-    const {addToast} = useToasts()
+
+    const {
+      onSuccess
+    } = useForm(initialFieldValues, props.setCurrentId)
 
     useEffect(() => {
         props.fetchAllUsers()
@@ -30,7 +37,7 @@ const Users = ({classes, ...props}) => {
 
     const onDelete = id => {
         if(window.confirm('Voulez vous vraiment supprimer ce compte utilisateur ?')){
-            props.deleteUser(id, () => addToast('Supprimé avec succès', {appearance: 'error'}))
+            props.deleteUser(id, onSuccess('Supprimé', 'error'))
         }
 }
 
@@ -38,7 +45,7 @@ const Users = ({classes, ...props}) => {
         <Paper className={classes.paper} elevation={3}>
             <Grid container>
                 <Grid item xs={6}>
-                    <UserForm currentId={currentId}/>
+                    <UserForm {...({currentId, setCurrentId})}/>
                 </Grid>
                 <Grid item xs={6}>
                     <TableContainer>
