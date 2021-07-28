@@ -1,10 +1,12 @@
-import { Grid, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, ButtonGroup, withStyles } from "@material-ui/core"
+import { Grid, Paper, 
+         TableContainer, Table, TableHead, TableRow, TableCell, TableBody,  
+         Button, ButtonGroup, 
+         withStyles } from "@material-ui/core"
+import {Navbar, NavbarBrand, Container} from 'reactstrap'
 import React, {useEffect, useState} from "react"
 import {connect} from 'react-redux'
 import * as actions from '../actions/user' 
 import useForm from './useForm'
-import UserForm from './UserForm'
-import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 const styles = theme => ({
@@ -42,12 +44,14 @@ const Users = ({classes, ...props}) => {
 }
 
     return(
-        <Paper className={classes.paper} elevation={3}>
-            <Grid container>
-                <Grid item xs={6}>
-                    <UserForm {...({currentId, setCurrentId})}/>
-                </Grid>
-                <Grid item xs={6}>
+        <div>
+            <Navbar color="light" light>
+                <Container>
+                    <NavbarBrand>Tableau de bord</NavbarBrand>
+                </Container>
+            </Navbar> 
+            <Paper className={classes.paper} elevation={3}>
+                <Grid container>
                     <TableContainer>
                         <Table>
                             <TableHead className={classes.root}>
@@ -63,7 +67,6 @@ const Users = ({classes, ...props}) => {
                                             <TableCell>{user.email}</TableCell>
                                             <TableCell>
                                                 <ButtonGroup variant="text">
-                                                    <Button><EditIcon color="primary" onClick={() => {setCurrentId(user.id)}} /></Button>
                                                     <Button><DeleteIcon color="error" onClick={() => {onDelete(user.id)}}/></Button>
                                                 </ButtonGroup>
                                             </TableCell>
@@ -74,8 +77,8 @@ const Users = ({classes, ...props}) => {
                         </Table>
                     </TableContainer>
                 </Grid>
-            </Grid>
-        </Paper>
+            </Paper>
+        </div>
     )
 }
 

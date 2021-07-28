@@ -36,11 +36,11 @@ const UserForm = ({classes, ...props}) => {
         e.preventDefault()
         if(validate()){
             if(props.currentId === 0){
-                props.createUser(props.usersList, values, onSuccess('Ajouté', 'success'))
+                props.createUser(values, onSuccess('Ajouté', 'success'))
                 resetForm()
             }
             else{
-                props.updateUser(props.currentId, props.usersList, values, onSuccess('Modifié', 'success'))
+                props.updateUser(props.currentId, values, onSuccess('Modifié', 'success'))
                 resetForm()
             }
         }

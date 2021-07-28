@@ -7,8 +7,8 @@ export const ACTION_TYPES = {
     FETCH_ALL: 'FETCH_ALL'
 }
 
-const formatData = (usersList, data) => ({
-    id: usersList.length === 0 ? 1 : usersList[usersList.length - 1].id + 1,
+const formatData = data => ({
+    id: 1,
     ...data
 })
 
@@ -23,10 +23,11 @@ export const fetchAll = () => dispatch => {
         .catch(err => console.log(err))
 }
 
-export const create = (usersList, data, onSuccess) => dispatch => {
-    data = formatData(usersList, data)
+export const create = (data, onSuccess) => dispatch => {
+    data = formatData(data)
     api.user().create(data)
         .then(response => {
+            console.log(response)
             dispatch({
                 type: ACTION_TYPES.CREATE,
                 payload: response.data
@@ -36,10 +37,10 @@ export const create = (usersList, data, onSuccess) => dispatch => {
         .catch(err => console.log(err))
 }
 
-export const update = (id, usersList, data, onSuccess) => dispatch => {
-    data = formatData(usersList, data)
+export const update = (id, data, onSuccess) => dispatch => {
+    data = formatData(data)
     api.user().update(id, data)
-        .then(response => {
+        .then(() => {
             dispatch({
                 type: ACTION_TYPES.UPDATE,
                 payload: {id, ...data}
@@ -51,7 +52,7 @@ export const update = (id, usersList, data, onSuccess) => dispatch => {
 
 export const remove = (id, onSuccess) => dispatch => {
     api.user().delete(id)
-        .then(response => {
+        .then(() => {
             dispatch({
                 type: ACTION_TYPES.DELETE,
                 payload: id
